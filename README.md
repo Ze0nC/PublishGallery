@@ -1,7 +1,7 @@
 # PublishGallery Plugin for Publish
 
 <p align="center">
-    <img src="PublishGalleryPreview.png" width="400" max-width="90%" alt="PublishGalleryPreview" />
+    <img src="PublishGalleryPreview.png" width="90%" alt="PublishGalleryPreview" />
 </p>
 
 This is a pure CSS responsive gallery plugin for Publish, 100% JavaScript-free.
@@ -86,6 +86,8 @@ As shown in the example, photos are added as markdown list.  Each item in list c
 It uses the following grammar: `\gallery{description}{path/to/photo}`, where the first parameter is the description of the photo, and the second parameter is path to the photo.
 
 > Currently PublishGallery only supports at maximum one gallery per post, so you can't leave empty line between the `\gallery{}{}` entries. 
+
+For those who are familiar to LaTeX, you may have noticed where did this grammar come from...
 
 ## More 
 
