@@ -28,7 +28,7 @@ And it supports both light and dark mode.
 let package = Package(
     ...
     dependencies: [
-        .package(url: "https://github.com/Ze0nC/PublishGallery", .branch("master"))
+        .package(url: "https://github.com/Ze0nC/PublishGallery", .branch("main"))
     ],
     targets: [
         .target(
