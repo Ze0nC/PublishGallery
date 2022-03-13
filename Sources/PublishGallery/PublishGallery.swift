@@ -15,23 +15,23 @@ internal struct PublishGallery {
     private static var id = -1
     
     internal static let galleryModeSVG: String = """
-    <svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg"><g id="gallery-mode" stroke="none" stroke-width="1" fill-rule="evenodd"><rect id="Rectangle" x="0" y="0" width="24" height="19" rx="2"></rect><circle id="Oval" cx="12" cy="22" r="2"></circle><circle id="Oval" cx="17" cy="22" r="2"></circle><circle id="Oval" cx="7" cy="22" r="2"></circle></g></svg>
+    <svg><rect width="24" rx="2" height="19"></rect><rect y="20" width="6" height="4" rx="1" x="2"></rect><rect x="9" y="20" width="6" height="4" rx="1"></rect><rect x="16" y="20" width="6" height="4" rx="1"></rect></svg>
     """
     
     internal static let plainModeSVG: String = """
-    <svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg"><g id="plain-mode" stroke="none" stroke-width="1" fill-rule="evenodd"><rect id="Rectangle" x="0" y="13" width="24" height="11" rx="2"></rect><rect id="Rectangle" x="0" y="0" width="24" height="11" rx="2"></rect></g></svg>
+    <svg><rect y="13" width="24" height="11" rx="2"></rect><rect width="24" height="11" rx="2"></rect></svg>
     """
     internal static let thumbnailModeSVG: String = """
-    <svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg"><g id="thumbnail-mode" stroke="none" stroke-width="1" fill-rule="evenodd"><rect id="Rectangle" x="0" y="0" width="11" height="11" rx="2"></rect><rect id="Rectangle" x="13" y="0" width="11" height="11" rx="2"></rect><rect id="Rectangle" x="13" y="13" width="11" height="11" rx="2"></rect><rect id="Rectangle" x="0" y="13" width="11" height="11" rx="2"></rect></g></svg>
+    <svg><rect width="11" height="11" rx="2"></rect><rect x="13" width="11" height="11" rx="2"></rect><rect x="13" y="13" width="11" height="11" rx="2"></rect><rect y="13" width="11" height="11" rx="2"></rect></svg>
     """
     internal static let galleryLargeSVG: String = """
-    <svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg"><g id="gallery-large" stroke="none" stroke-width="1" fill-rule="evenodd"><rect id="Rectangle" x="0" y="2" width="24" height="20" rx="2"></rect></g></svg>
+    <svg><rect y="2" width="24" height="20" rx="2"></rect></svg>
     """
     internal static let galleryMediumSVG: String = """
-    <svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg"><g id="gallery-medium" stroke="none" stroke-width="1" fill-rule="evenodd"><rect id="Rectangle" x="2" y="4" width="20" height="16" rx="2"></rect></g></svg>
+    <svg><rect x="2" y="4" width="20" height="16" rx="2"></rect></svg>
     """
     internal static let gallerySmallSVG: String = """
-    <svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg"><g id="gallery-small" stroke="none" stroke-width="1" fill-rule="evenodd"><rect id="Rectangle" x="4" y="6" width="16" height="12" rx="2"></rect></g></svg>
+    <svg><rect x="4" y="6" width="16" height="12" rx="2"></rect></svg>
     """
     
     static func newId() -> String {
@@ -79,125 +79,73 @@ public extension Modifier {
                 return html
             }
             
-            
             let photos = matchingResults.map { $0! }
             
             let id = PublishGallery.newId()
-            return Node<HTML.BodyContext>.div(
-                .class("gallery-wrapper"),
-                .input(
-                    .type(.radio),
-                    .id("gallery-mode"),
-                    .name("viewmode"),
-                    .value("gallery-mode"),
-                    Attribute(
-                        name: "checked",
-                        value: nil,
-                        ignoreIfValueIsEmpty: false
-                    )
-                ),
-                .label(
-                    .for("gallery-mode"),
-                    .raw(PublishGallery.galleryModeSVG)
-                ),
-                .input(
-                    .type(.radio),
-                    .id("plain-mode"),
-                    .name("viewmode"),
-                    .value("plain-mode")
-                ),
-                .label(
-                    .for("plain-mode"),
-                    .raw(PublishGallery.plainModeSVG)
-                ),
-                .input(
-                    .type(.radio),
-                    .id("thumbnail-mode"),
-                    .name("viewmode"),
-                    .value("thumbnail-mode")
-                ),
-                .label(
-                    .for("thumbnail-mode"),
-                    .raw(PublishGallery.thumbnailModeSVG)
-                ),
-                .input(
-                    .type(.radio),
-                    .id("gallery-large"),
-                    .name("viewsize"),
-                    .value("gallery-large"),
-                    Attribute(
-                        name: "checked",
-                        value: nil,
-                        ignoreIfValueIsEmpty: false
-                    )
-                ),
-                .label(
-                    .for("gallery-large"),
-                    .raw(PublishGallery.galleryLargeSVG)
-                ),
-                .input(
-                    .type(.radio),
-                    .id("gallery-medium"),
-                    .name("viewsize"),
-                    .value("gallery-medium")
-                ),
-                .label(
-                    .for("gallery-medium"),
-                    .raw(PublishGallery.galleryMediumSVG)
-                ),
-                .input(
-                    .type(.radio),
-                    .id("gallery-small"),
-                    .name("viewsize"),
-                    .value("gallery-small")
-                ),
-                .label(
-                    .for("gallery-small"),
-                    .raw(PublishGallery.gallerySmallSVG)
-                ),
-                .div(
-                    .class("gallery"),
-                    .div(.class("background")),
-                    .ul(
-                        .class("slider"),
-                        .forEach(zip(1...photos.count, photos)) { num, photo in
-                            .li(
-                                .class("photo"),
-                                .id(id + "\(num)"),
-                                .img(
-                                    .src(photo.url)
-                                ),
-                                .p(
-                                    .class("photo-description"),
-                                    .text(photo.description)
-                                ),
-                                .div(
-                                    .class("prevNext"),
-                                    .a(
-                                        .href("#\(id)\(num == 1 ? photos.count : num - 1)"),
-                                        .text("←")
-                                    ),
-                                    .a(
-                                        .href("#\(id)\(num == photos.count ? 1 : num + 1)"),
-                                        .text("→")
-                                    )
-                                ),
-                                .div(
-                                    .class("bullets"),
-                                    .forEach(1...photos.count) { bulletIndex in
-                                        .a(
-                                            .href("#\(id)\(bulletIndex)"),
-                                            .if(bulletIndex == num,
-                                                .attribute(named: "style", value: "background: #fff;")
-                                            )
-                                        )
-                                    }
-                                )
-                            )
+            
+            return Div {
+                Div().class("control-background")
+                Div().class("control-background")
+                
+                Plot.Input(type: .radio, name: "viewmode", value: "gallery-mode")
+                    .id("gallery-mode")
+                    .attribute(named: "checked", value: nil, ignoreValueIfEmpty: false)
+                Label("") {Node<HTML.BodyContext>.raw(PublishGallery.galleryModeSVG)}
+                    .attribute(named: "for", value: "gallery-mode")
+                Div().class("line")
+                Plot.Input(type: .radio, name: "viewmode", value: "plain-mode")
+                    .id("plain-mode")
+                Label("") {Node<HTML.BodyContext>.raw(PublishGallery.plainModeSVG)}
+                    .attribute(named: "for", value: "plain-mode")
+                Div().class("line")
+                Plot.Input(type: .radio, name: "viewmode", value: "thumbnail-mode")
+                    .id("thumbnail-mode")
+                Label("") {Node<HTML.BodyContext>.raw(PublishGallery.thumbnailModeSVG)}
+                    .attribute(named: "for", value: "thumbnail-mode")
+                
+                Plot.Input(type: .radio, name: "viewsize", value: "gallery-large")
+                    .id("gallery-large")
+                    .attribute(named: "checked", value: nil, ignoreValueIfEmpty: false)
+                Label("") {Node<HTML.BodyContext>.raw(PublishGallery.galleryLargeSVG)}
+                    .attribute(named: "for", value: "gallery-large")
+                Div().class("line")
+                Plot.Input(type: .radio, name: "viewsize", value: "gallery-medium")
+                    .id("gallery-medium")
+                Label("") {Node<HTML.BodyContext>.raw(PublishGallery.galleryMediumSVG)}
+                    .attribute(named: "for", value: "gallery-medium")
+                Div().class("line")
+                Plot.Input(type: .radio, name: "viewsize", value: "gallery-small")
+                    .id("gallery-small")
+                Label("") {Node<HTML.BodyContext>.raw(PublishGallery.gallerySmallSVG)}
+                    .attribute(named: "for", value: "gallery-small")
+                
+                Div {
+                    Div().class("background")
+                    
+                    List(photos.enumerated()) { num, photo in
+                        ListItem {
+                            Image(photo.url)
+                            Paragraph(photo.description).class("photo-description")
+                            Div {
+                                Link("←", url: "#\(id)\(num == 0 ? photos.count - 1 : num - 1)")
+                                Link("→", url: "#\(id)\(num == photos.count - 1 ? 0 : num + 1)")
+                            }
+                            .class("prevNext")
+                            List(0..<photos.count) { bulletIndex in
+                                Link("", url: "#\(id)\(bulletIndex)")
+                                    .attribute(named: "style", value: bulletIndex == num ? "background: #fff;" : nil, ignoreValueIfEmpty: true)
+                            }
+                            .class("bullets")
                         }
-                    )
-                )
-            ).render()
+                        .class("photo")
+                        .id("\(id)\(num)")
+                    }
+                    .class("slider")
+                }
+                .class("gallery")
+            }
+            .class("gallery-wrapper")
+            .render()
             
         }
     }
@@ -205,7 +153,7 @@ public extension Modifier {
 
             
 public extension Plugin {
-    static func publishGallery() throws -> Self {
+    static func publishGallery(maxPhoto: Int = 128) throws -> Self {
         Plugin(name: "Publish Gallery") { context in
             let cssFile = try context.createOutputFile(at: "gallery.css")
             try cssFile.write(galleryCssFile())
@@ -213,5 +161,11 @@ public extension Plugin {
                 .publishGallery()
             )
         }
+    }
+}
+
+public extension Content {
+    var numberOfPhotos: Int {
+        self.body.html.components(separatedBy: "<li class=\"photo\"").count - 1
     }
 }
