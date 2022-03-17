@@ -47,6 +47,25 @@ internal struct PublishGallery {
         }
         return "G_" + String(result.reversed()) + "_"
     }
+    
+    static let regex = try! NSRegularExpression(
+        pattern: "^[-\\*] \\\\gallery\\{(?<description>[^{}]*)\\}\\{(?<url>[^{}]+)\\}$",
+        options: NSRegularExpression.Options.caseInsensitive
+    )
+    
+    static func parse<S>(_ line: S) -> (path: String, description: String)? where S: StringProtocol {
+        guard let match = regex.matches(in: String(line), options: .anchored, range: NSRange(location: 0, length: line.count)).first else {
+            return nil
+        }
+        if #available(OSX 10.15, *) {
+            let description = line[Range(match.range(withName: "description"), in: line)!]
+            let url = line[Range(match.range(withName: "url"), in: line)!]
+            return (path: String(url), description: String(description))
+        } else {
+            // Fallback on earlier versions
+            fatalError("Only supports macOS 10.15 or higher")
+        }
+    }
 }
 
 fileprivate func galleryCssFile() -> String {
@@ -56,30 +75,11 @@ fileprivate func galleryCssFile() -> String {
 public extension Modifier {
     static func publishGallery() -> Self {
         return Modifier(target: .lists) { html, markdown in
+            let photos = markdown.split(separator: "\n").compactMap{ PublishGallery.parse($0) }
             
-            let regex = try! NSRegularExpression(
-                pattern: "^[-\\*] \\\\gallery\\{(?<description>[^{}]*)\\}\\{(?<url>[^{}]+)\\}$",
-                options: NSRegularExpression.Options.caseInsensitive
-            )
-            let matchingResults = markdown.split(separator: "\n").map{ line -> (description: String, url: String)? in
-                guard let match = regex.matches(in: String(line), options: .anchored, range: NSRange(location: 0, length: line.count)).first else {
-                    return nil
-                }
-                
-                if #available(OSX 10.15, *) {
-                    let description = line[Range(match.range(withName: "description"), in: line)!]
-                    let url = line[Range(match.range(withName: "url"), in: line)!]
-                    return (description: String(description), url: String(url))
-                } else {
-                    // Fallback on earlier versions
-                    fatalError("Only supports macOS 10.15 or higher")
-                }
-            }
-            guard matchingResults.map({$0 != nil}).reduce(true, {$0 && $1}) else {
+            guard photos.count > 0 else {
                 return html
             }
-            
-            let photos = matchingResults.map { $0! }
             
             let id = PublishGallery.newId()
             
@@ -124,7 +124,7 @@ public extension Modifier {
                     
                     List(photos.enumerated()) { num, photo in
                         ListItem {
-                            Image(photo.url)
+                            Image(photo.path)
                             Paragraph(photo.description).class("photo-description")
                             Div {
                                 Link("←", url: "#\(id)\(num == 0 ? photos.count - 1 : num - 1)")
