@@ -57,14 +57,9 @@ internal struct PublishGallery {
         guard let match = regex.matches(in: String(line), options: .anchored, range: NSRange(location: 0, length: line.count)).first else {
             return nil
         }
-        if #available(OSX 10.15, *) {
-            let description = line[Range(match.range(withName: "description"), in: line)!]
-            let url = line[Range(match.range(withName: "url"), in: line)!]
-            return (path: String(url), description: String(description))
-        } else {
-            // Fallback on earlier versions
-            fatalError("Only supports macOS 10.15 or higher")
-        }
+        let description = line[Range(match.range(withName: "description"), in: line)!]
+        let url = line[Range(match.range(withName: "url"), in: line)!]
+        return (path: String(url), description: String(description))
     }
 }
 
